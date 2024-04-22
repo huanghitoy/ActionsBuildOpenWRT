@@ -1,14 +1,14 @@
-name: Build X86_64 IPv4 Version OpenWrt
+name: Build X86_64 Lienol OpenWrt 22.03
 
 on:
   repository_dispatch:
   workflow_dispatch:
 
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_BRANCH: master
+  REPO_URL: https://github.com/Lienol/openwrt
+  REPO_BRANCH: 22.03
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: x86_64_ipv4.config
+  CONFIG_FILE: x86_64_Lienol.config
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: x86_64-part2.sh
   UPLOAD_BIN_DIR: false
@@ -94,7 +94,7 @@ jobs:
     - name: Clone source code
       working-directory: ./
       run: |
-        git clone --depth=1 $REPO_URL -b $REPO_BRANCH openwrt
+        git clone --single-branch $REPO_URL -b $REPO_BRANCH openwrt
 
     - name: Load custom feeds
       run: |
