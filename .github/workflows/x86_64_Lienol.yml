@@ -103,21 +103,39 @@ jobs:
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
 
-    - name: Update feeds
-      run: cd openwrt && ./scripts/feeds update -a
-
-    - name: Install feeds
-      run: cd openwrt && ./scripts/feeds install -a
-
-    - name: Load custom configuration
+    - name: Update feeds && rm Import external feeds - mosdos  alist qBittorrent  wwan
+      working-directory: ./openwrt
       run: |
-        [ -e files ] && mv files openwrt/files
+        ./scripts/feeds update -a
+        rm -rf feeds/packages/net/{xray-*,trojan*,v2ray-*,sing*}
+        git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
+        git clone https://github.com/sbwml/luci-app-alist package/alist
+        git clone https://github.com/sbwml/openwrt-qBittorrent package/qBittorrent
+        git clone https://github.com/huanghitoy/wwan.git package/wwan
+
+    - name: Import external feeds - JerryKuKu Argon
+      working-directory: ./openwrt
+      run: |
+        rm -rf feeds/luci/themes/luci-theme-argon
+        git clone https://github.com/jerrykuku/luci-theme-argon.git feeds/luci/themes/luci-theme-argon
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+        
+    - name: update golang 1.22
+      working-directory: ./openwrt
+      run: |
+        rm -rf feeds/packages/lang/golang        
+        git clone https://github.com/sbwml/packages_lang_golang -b 22.x feeds/packages/lang/golang
+        make package/symlinks    
+
+    - name: Configuration Customization x86_64_Lienol.config
+      run: |
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
-    - name: Download package
+    - name: Download package  x86_64_Lienol.config
       id: package
       run: |
         cd openwrt
